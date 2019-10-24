@@ -1,0 +1,16 @@
+<launch>
+  <!-- Upload nodes for UAV 1 -->
+  <node name="DJIuav1" pkg="alliance_uav" type="DJIuav.py" args="1" />
+  <node name="uav_data1" pkg="alliance_uav" type="uav_data.py" args="1" />
+  <node name="uav_behaviour1" pkg="alliance_uav" type="uav_behaviour.py" args="1" />
+
+  <!-- Upload nodes for UAV 2 -->
+  <node name="DJIuav2" pkg="alliance_uav" type="DJIuav.py" args="2" />
+  <node name="uav_data2" pkg="alliance_uav" type="uav_data.py" args="2" />
+  <node name="uav_behaviour2" pkg="alliance_uav" type="uav_behaviour.py" args="2" />
+
+  <!-- Upload nodes for UAV 3 -->
+  <node name="DJIuav3" pkg="alliance_uav" type="DJIuav.py" args="3" />
+  <node name="uav_data3" pkg="alliance_uav" type="uav_data.py" args="3" />
+  <node name="uav_behaviour3" pkg="alliance_uav" type="uav_behaviour.py" args="3" />
+</launch>
