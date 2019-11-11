@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rospy
 from std_msgs.msg import String
@@ -7,6 +7,7 @@ import sys
 class UavBehaviour:
 
   def __init__(self, uav_id):
+    self.loop_rate = 10 # Message frequency (in hz)
     rospy.init_node('uav_behaviour'+uav_id, anonymous=False)
 
     # Init variables
@@ -28,8 +29,11 @@ class UavBehaviour:
     return "0.100,0.200;0.110,0.200;0.120,0.200"
 
   def run(self):
+    rate = rospy.Rate(self.loop_rate)
     while not rospy.is_shutdown():
+      rospy.loginfo(self.mission_context_data)
       self.pub_actual_command.publish(self.__define_mission())
+      rate.sleep()
 
 if __name__ == '__main__': 
   # Falta manejar errores de ingreso de parametros

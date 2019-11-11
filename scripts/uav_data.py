@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rospy
 from std_msgs.msg import String, UInt8
@@ -13,14 +13,14 @@ class UavData:
     # Init variables
     self.uav_id = uav_id
     self.mission_progress = 0
-    self.camera_error = 0
-    self.motor_error = 0
+    self.camera_status = 0
+    self.motor_status = 0
     self.battery_level = 0
 
     # Suscribers definition
     rospy.Subscriber('DJIuav'+uav_id+'/missionprogress', UInt8, self.recv_mission_progress)
-    rospy.Subscriber('DJIuav'+uav_id+'/cameraerror', UInt8, self.recv_camera_error)
-    rospy.Subscriber('DJIuav'+uav_id+'/motorerror', UInt8, self.recv_motor_error)
+    rospy.Subscriber('DJIuav'+uav_id+'/camerastatus', UInt8, self.recv_camera_status)
+    rospy.Subscriber('DJIuav'+uav_id+'/motorstatus', UInt8, self.recv_motor_status)
     rospy.Subscriber('DJIuav'+uav_id+'/batterylevel', UInt8, self.recv_battery_level)
 
     # Publisher definition
@@ -31,17 +31,17 @@ class UavData:
   def recv_mission_progress(self, data):
     self.mission_progress = data.data
 
-  def recv_camera_error(self, data):
-    self.camera_error = data.data
+  def recv_camera_status(self, data):
+    self.camera_status = data.data
 
-  def recv_motor_error(self, data):
-    self.motor_error = data.data
+  def recv_motor_status(self, data):
+    self.motor_status = data.data
 
   def recv_battery_level(self, data):
     self.battery_level = data.data
 
   def __get_mission_data(self):
-    mission_data = "{},{},{},{},{}".format(self.uav_id, self.mission_progress, self.camera_error, self.motor_error, self.battery_level)
+    mission_data = "{},{},{},{},{}".format(self.uav_id, self.mission_progress, self.camera_status, self.motor_status, self.battery_level)
     return mission_data
 
   def run(self):
