@@ -38,7 +38,7 @@ class MissionDataCompiler:
     rate = rospy.Rate(self.loop_rate)
     while not rospy.is_shutdown():
       self.pub_mission_context.publish("{};{};{}".format(self.mission_data_1, self.mission_data_2, self.mission_data_3))
-      rospy.loginfo("Published Mission Context Info: UAV 1: {} \nUAV 2 :{} \nUAV 3: {}".format(self.mission_data_1, self.mission_data_2, self.mission_data_3))
+      rospy.loginfo("Published Mission Context Info:\n UAV 1: {} \nUAV 2 :{} \nUAV 3: {}".format(self.mission_data_1, self.mission_data_2, self.mission_data_3))
       rate.sleep()
 
 if __name__ == '__main__': 

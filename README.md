@@ -16,9 +16,12 @@ Use *rqt_graph* to see all nodes and topics
 $ rosrun rqt_graph rqt_graph
 ```
 
-## Libraries (Python 2)
-* Flask *version*
-* qrcode *version*
-* numpy
-* matplotlib ?
+## Libraries (Python 3)
+* Flask 1.0.2
+* Flask SocketIO 4.2.1
+
+## Helpers libraries (Python 3)
+### Qr
+* qrcode 6.1
+* matplotlib 3.1.1
 

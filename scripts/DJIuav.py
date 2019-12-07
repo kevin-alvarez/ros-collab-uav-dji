@@ -17,35 +17,26 @@ class DJIuav:
 
     # Init variables
     self.uav_id = uav_id
-    self.mission_waypoints = ""
+    self.new_mission = ""
 
     # Suscriber definition
-    rospy.Subscriber('DJIuav'+uav_id+'/missionwaypoints', String, self.recv_mission_waypoints)
+    rospy.Subscriber('DJIuav'+uav_id+'/newmission', String, self.recv_new_mission)
 
     # Publishers definitions
     self.pub_mission_progress = rospy.Publisher('DJIuav'+uav_id+'/missionprogress', UInt8, queue_size=10)
     self.pub_camera_status = rospy.Publisher('DJIuav'+uav_id+'/camerastatus', UInt8, queue_size=10)
     self.pub_motor_status = rospy.Publisher('DJIuav'+uav_id+'/motorstatus', UInt8, queue_size=10)
     self.pub_battery_level = rospy.Publisher('DJIuav'+uav_id+'/batterylevel', UInt8, queue_size=10)
+    self.pub_mission_waypoints = rospy.Publisher('DJIuav'+uav_id+'/missionwaypoints', String, queue_size=10)
+    self.pub_actual_waypoint = rospy.Publisher('DJIuav'+uav_id+'/actualwaypoint', UInt8, queue_size=10)
 
     rospy.loginfo("Node DJIuav "+uav_id+" ready...")
 
 
 
-  def recv_mission_waypoints(self, data):
+  def recv_new_mission(self, data):
     # transformar string de waypoints a lista...
-    self.mission_waypoints = data.data
-
-  def publish_data(self, data):
-    data = data.split(',')
-    mission_progress = int(data[1])
-    camera_status = int(data[2])
-    motor_status = int(data[3])
-    battery_level = int(data[4])
-    self.pub_mission_progress.publish(mission_progress)
-    self.pub_camera_status.publish(camera_status)
-    self.pub_motor_status.publish(motor_status)
-    self.pub_battery_level.publish(battery_level)
+    self.new_mission = data.data
 
   def get_uav_id(self):
     return self.uav_id
@@ -63,7 +54,6 @@ class DJIuav:
       self.pub_camera_status.publish(camera_status)
       self.pub_motor_status.publish(motor_status)
       self.pub_battery_level.publish(battery_level)
-      rospy.loginfo("Mission waypoints: [{}]".format(self.mission_waypoints))
       rate.sleep()
 
 # Flask directives
@@ -84,11 +74,33 @@ def connect():
 def disconnect():
   print("A node was disconnected...")
 
-@socketio.on('uav_data')
-def uav_data(data):
-  print("Data was sended from client: [{}]".format(data))
-  uav_node.publish_data(data)
+@socketio.on('camerastatus')
+def camera_status(data):
+  uav_node.pub_camera_status.publish(int(data))
 
+@socketio.on('motorstatus')
+def motor_status(data):
+  uav_node.pub_motor_status.publish(int(data))
+
+@socketio.on('batterylevel')
+def battery_level(data):
+  uav_node.pub_battery_level.publish(int(data))
+
+@socketio.on('missionprogress')
+def mission_progress(data):
+  uav_node.pub_mission_progress.publish(int(data))
+
+@socketio.on('missionwaypoints')
+def mission_waypoint(data):
+  uav_node.pub_mission_waypoints.publish(data)
+
+@socketio.on('actualwaypoint')
+def actual_waypoint(data):
+  uav_node.pub_actual_waypoint.publish(int(data))
+
+@socketio.on('requestnewmission')
+def request_new_mission():
+  socketio.emit('newmission', uav_node.new_mission)
 
 if __name__ == '__main__':
   try:
