@@ -46,6 +46,8 @@ class UavBehaviour:
   def run(self):
     rate = rospy.Rate(self.loop_rate)
     while not rospy.is_shutdown():
+      rospy.loginfo("data:{} - wp:{} - mission:{}".format(self.context_data, str(self.actual_waypoint), self.mission_waypoints))
+      rospy.loginfo(str(self.actual_waypoint))
       self.pub_mission_waypoints.publish(self.__define_mission())
       rate.sleep()
 
