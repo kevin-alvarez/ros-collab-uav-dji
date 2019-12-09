@@ -7,13 +7,14 @@
   <!-- Upload nodes for UAV 2 -->
   <node name="DJIuav2" pkg="collab-uav-dji" type="DJIuav.py" args="2" />
   <node name="uav_data2" pkg="collab-uav-dji" type="uav_data.py" args="2" />
-  <node name="uav_behaviour2" pkg="collab-uav-dji" type="uav_behaviour.py" args="2" output="screen" />
+  <node name="uav_behaviour2" pkg="collab-uav-dji" type="uav_behaviour.py" args="2" />
 
   <!-- Upload nodes for UAV 3 -->
   <node name="DJIuav3" pkg="collab-uav-dji" type="DJIuav.py" args="3" />
   <node name="uav_data3" pkg="collab-uav-dji" type="uav_data.py" args="3" />
-  <node name="uav_behaviour3" pkg="collab-uav-dji" type="uav_behaviour.py" args="3" output="screen" />
+  <node name="uav_behaviour3" pkg="collab-uav-dji" type="uav_behaviour.py" args="3" />
 
-  <!-- Upload node for mission data compilation -->
+  <!-- Upload node for mission data compilation 
   <node name="mission_data_compiler" pkg="collab-uav-dji" type="mission_data_compiler.py" />
+  -->
 </launch>

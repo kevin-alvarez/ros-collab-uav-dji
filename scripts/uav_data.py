@@ -24,7 +24,7 @@ class UavData:
     rospy.Subscriber('DJIuav'+uav_id+'/batterylevel', UInt8, self.recv_battery_level)
 
     # Publisher definition
-    self.pub_mission_data = rospy.Publisher('missiondata'+uav_id, String, queue_size=10)
+    self.pub_mission_data = rospy.Publisher('missioncontext/data'+uav_id, String, queue_size=10)
 
     rospy.loginfo("Node uav_data "+uav_id+" ready...")
 

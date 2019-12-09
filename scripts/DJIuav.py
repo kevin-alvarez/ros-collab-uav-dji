@@ -8,6 +8,7 @@ import os
 from std_msgs.msg import String, UInt8
 from flask import Flask
 from flask_socketio import SocketIO, emit
+import logging
 
 class DJIuav:
 
@@ -18,6 +19,7 @@ class DJIuav:
     # Init variables
     self.uav_id = uav_id
     self.new_mission = ""
+    self.actual_mission = ""
 
     # Suscriber definition
     rospy.Subscriber('DJIuav'+uav_id+'/newmission', String, self.recv_new_mission)
@@ -32,32 +34,16 @@ class DJIuav:
 
     rospy.loginfo("Node DJIuav "+uav_id+" ready...")
 
-
-
   def recv_new_mission(self, data):
-    # transformar string de waypoints a lista...
     self.new_mission = data.data
 
   def get_uav_id(self):
     return self.uav_id
 
-  def run(self):
-    # status variables definition
-    mission_progress = 50
-    camera_status = 0
-    motor_status = 0
-    battery_level = 30
-    # ROS loop def
-    rate = rospy.Rate(self.loop_rate)
-    while not rospy.is_shutdown():
-      self.pub_mission_progress.publish(mission_progress)
-      self.pub_camera_status.publish(camera_status)
-      self.pub_motor_status.publish(motor_status)
-      self.pub_battery_level.publish(battery_level)
-      rate.sleep()
-
 # Flask directives
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.disabled = True # Disable socketio logs
 socketio = SocketIO(app, async_mode=None)
 uav_node = DJIuav(sys.argv[1])
 
@@ -88,10 +74,12 @@ def battery_level(data):
 
 @socketio.on('missionprogress')
 def mission_progress(data):
-  uav_node.pub_mission_progress.publish(int(data))
+  progress = round(float(data))
+  uav_node.pub_mission_progress.publish(progress)
 
 @socketio.on('missionwaypoints')
 def mission_waypoint(data):
+  uav_node.actual_mission = data
   uav_node.pub_mission_waypoints.publish(data)
 
 @socketio.on('actualwaypoint')
@@ -100,7 +88,10 @@ def actual_waypoint(data):
 
 @socketio.on('requestnewmission')
 def request_new_mission():
-  socketio.emit('newmission', uav_node.new_mission)
+  if uav_node.actual_mission == uav_node.new_mission: # Si ya se realizo la mision nueva y no ha cambiado
+    socketio.emit('newmission', "")
+  else:  # Igual puede caer en este punto si la mision es vacia (no existe mision pendiente por UAV vecino)
+    socketio.emit('newmission', uav_node.new_mission)
 
 if __name__ == '__main__':
   try:
