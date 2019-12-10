@@ -38,16 +38,21 @@ class UavBehaviour:
     self.neighbor_data = data.data.split(",")
 
   def recv_mission_waypoints(self, data):
-    self.mission_waypoints = data.data.split(';')
+    if data.data != "":
+      self.mission_waypoints = data.data.split(';')
+    else:
+      self.mission_waypoints = []
 
   def recv_actual_waypoint(self, data):
     self.actual_waypoint = int(data.data)
 
   def __define_mission(self):
-    # Se debe definir los nuevos (o no) waypoints para la mission
-
-    self.new_task = self.mission_waypoints[self.actual_waypoint:]
-    return "0.100,0.200;0.110,0.200;0.120,0.200"
+    # Aún no se usan los activadores de comportamientos, solo se toma misión si existe
+    if not self.mission_waypoints:
+      new_task = ""
+    else:
+      new_task = ";".join(self.mission_waypoints[self.actual_waypoint:])
+    return new_task
 
   def run(self):
     rate = rospy.Rate(self.loop_rate)
