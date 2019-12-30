@@ -58,6 +58,9 @@ def connect():
 
 @socketio.on('disconnect')
 def disconnect():
+  uav_node.pub_camera_status.publish(0)
+  uav_node.pub_motor_status.publish(0)
+  uav_node.pub_battery_level.publish(0)
   print("A node was disconnected...")
 
 @socketio.on('camerastatus')
@@ -78,7 +81,7 @@ def mission_progress(data):
   uav_node.pub_mission_progress.publish(progress)
 
 @socketio.on('missionwaypoints')
-def mission_waypoint(data):
+def mission_waypoint(data): # Can't simulate with stop, must have own button in app
   uav_node.actual_mission = data
   uav_node.pub_mission_waypoints.publish(data)
 
